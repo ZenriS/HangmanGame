@@ -173,6 +173,7 @@ public class GetWord_Script : MonoBehaviour
         _scoreManangerScript.AddScore(letterCount);
         yield return new WaitForSeconds(1f);
         _inputManangerScript.ToggelInputField(true);
+        CheckWordList(true);
     }
 
     void CheckWordList(bool b)
