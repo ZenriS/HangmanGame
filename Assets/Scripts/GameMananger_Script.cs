@@ -74,6 +74,11 @@ public class GameMananger_Script : MonoBehaviour
     public void StartGame()
     {
         _wordImportScript.SetWords();
+        if (_getWordScript.WordList.Count == 0)
+        {
+            _wordAdded.SetText("No Words");
+            return;
+        }
         _getWordScript.ChooseWord();
         CategoryUIGO.gameObject.SetActive(false);
         MainGameUIGO.SetActive(true);
