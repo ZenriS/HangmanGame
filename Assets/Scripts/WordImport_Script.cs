@@ -12,14 +12,15 @@ public class WordImport_Script : MonoBehaviour
     public string SubFolder;
     public string FileName;
     public List<string> Words;
-    private bool importDone;
+    private bool _importDone;
     private GetWord_Script _getWordScript;
-    private List<string> activeWords;
-    private List<string> manualWords;
+    private List<string> _activeWords;
+    private List<string> _manualWords;
     public GameObject CatButtonPrefab;
     private Transform _catButtonHolder;
     private GameMananger_Script _gameManangerScript;
     private GameObject _loadingScreen;
+    private List<Button> _catButtons;
 
 
     void Start()
@@ -30,7 +31,9 @@ public class WordImport_Script : MonoBehaviour
         _loadingScreen = _catButtonHolder.parent.parent.GetChild(3).gameObject;
         _loadingScreen.SetActive(true);
         StartCoroutine("loadStreamingAsset");
-        manualWords = new List<string>();
+        _manualWords = new List<string>();
+        _activeWords = new List<string>();
+        _catButtons = new List<Button>();
     }
 
     IEnumerator loadStreamingAsset() //import csv file
@@ -79,7 +82,7 @@ public class WordImport_Script : MonoBehaviour
         {
             Words.Add(line);
         }
-        importDone = true;
+        _importDone = true;
         GetCategories();
     }
 
@@ -91,31 +94,51 @@ public class WordImport_Script : MonoBehaviour
         foreach (string s in cats)
         {
             Debug.Log(s);
-            GameObject go = Instantiate(CatButtonPrefab, _catButtonHolder);
-            Button bu = go.GetComponent<Button>();
-            TextMeshProUGUI t = bu.GetComponentInChildren<TextMeshProUGUI>();
-            bu.onClick.AddListener(() =>GetWords(s));
-            t.text = s;
-            go.transform.SetAsFirstSibling();
+            createButtons(s);
         }
+        createButtons("All");
         _loadingScreen.SetActive(false);
         //CatButtonHolder.GetChild(0).SetAsLastSibling();
     }
 
-    public void GetWords(string c) //get words from csv file based on category
+    void createButtons(string s) //creates all category buttons
     {
-        activeWords = new List<string>();
+        GameObject go = Instantiate(CatButtonPrefab, _catButtonHolder);
+        Button bu = go.GetComponent<Button>();
+        _catButtons.Add(bu);
+        TextMeshProUGUI t = bu.GetComponentInChildren<TextMeshProUGUI>();
+        bu.onClick.AddListener(() => GetWords(s, bu));
+        t.text = s;
+        go.transform.SetAsLastSibling();
+    }
+
+    public void GetWords(string c, Button bu) //get words from csv file based on category
+    {
+        //activeWords = new List<string>();
         foreach (string s in Words)
         {
-            if (s.Contains(c))
+            if (c == "All") //get all the words
+            {
+                Debug.Log(s);
+                string[] t = s.Split(';');
+                Debug.Log(t[0] + "/" + t[1]);
+                _activeWords.Add(t[1]);
+                ToggleCategoryButtons(false);
+                _gameManangerScript._wordAdded.SetText("All Categories Added");
+            }
+            else if (s.Contains(c))
             {
                 Debug.Log(s);
                 string[] t = s.Split(';');
                 Debug.Log(t[0] +"/" +t[1]);
-                activeWords.Add(t[1]);
+                _activeWords.Add(t[1]);
+                _gameManangerScript._wordAdded.SetText("Category Added");
             }
         }
-        _gameManangerScript._wordAdded.SetText("Category Set");
+        _gameManangerScript.UpdateWordCountText((_activeWords.Count + _manualWords.Count));
+
+        bu.interactable = false;
+
         //_getWordScript.WordList = new List<string>(activeWords);
         //_getWordScript.ChooseWord();
         //CatButtonHolder.gameObject.SetActive(false);
@@ -124,26 +147,43 @@ public class WordImport_Script : MonoBehaviour
 
     public void AddManualWord(string s) //add manual word
     {
-        manualWords.Add(s);
+        _manualWords.Add(s);
+        _gameManangerScript.UpdateWordCountText((_activeWords.Count + _manualWords.Count));
     }
 
     public void SetWords() //sets the active words
     {
-        if (activeWords != null && manualWords != null)
+        if (_activeWords != null && _manualWords != null)
         {
-            _getWordScript.WordList = activeWords.Concat(manualWords).ToList();
+            _getWordScript.WordList = _activeWords.Concat(_manualWords).ToList();
             return;
         }
-        if (activeWords != null)
+        if (_activeWords != null)
         {
-            _getWordScript.WordList = activeWords;
+            _getWordScript.WordList = _activeWords;
             return;
         }
-        if (manualWords != null)
+        if (_manualWords != null)
         {
-            _getWordScript.WordList = manualWords;
+            _getWordScript.WordList = _manualWords;
             return;
         }
+    }
 
+    public void ResetWordList()
+    {
+        _activeWords.Clear();
+        _manualWords.Clear();
+        ToggleCategoryButtons(true);
+        _gameManangerScript._wordAdded.SetText("Word List Cleard");
+        _gameManangerScript.UpdateWordCountText(0);
+    }
+
+    void ToggleCategoryButtons(bool b)
+    {
+        foreach (Button bu in _catButtons)
+        {
+            bu.interactable = b;
+        }
     }
 }

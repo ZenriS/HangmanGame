@@ -20,6 +20,7 @@ public class GameMananger_Script : MonoBehaviour
     private GetWord_Script _getWordScript;
     [HideInInspector] public ScaleOut_Script _wordAdded;
     private WordImport_Script _wordImportScript;
+    private TextMeshProUGUI _wordCountText;
 
     void Start()
     {
@@ -29,10 +30,12 @@ public class GameMananger_Script : MonoBehaviour
         _getWordScript = GetComponent<GetWord_Script>();
         _wordAdded = CategoryUIGO.GetComponentInChildren<ScaleOut_Script>();
         _wordImportScript = GetComponent<WordImport_Script>();
+        _wordCountText = CategoryUIGO.transform.GetChild(8).GetComponent<TextMeshProUGUI>();
         GameOverGO.SetActive(false);
         MainGameUIGO.SetActive(false);
         CategoryUIGO.SetActive(true);
         ToggleHard();
+        UpdateWordCountText(0);
     }
 
     public void GameIsOver(string t, string mt, int sc)
@@ -83,4 +86,11 @@ public class GameMananger_Script : MonoBehaviour
         CategoryUIGO.gameObject.SetActive(false);
         MainGameUIGO.SetActive(true);
     }
+
+    public void UpdateWordCountText(int i)
+    {
+        _wordCountText.text = "Word Count: \n" + i;
+    }
+
+    
 }
