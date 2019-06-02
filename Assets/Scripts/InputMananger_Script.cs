@@ -32,11 +32,13 @@ public class InputMananger_Script : MonoBehaviour
             if (b)
             {
                 Debug.Log("Correct");
+                //TODO: Add effects and sounds
                 _getWordScript.CheckLetterWord();
             }
             else
             {
                 Debug.Log("Wrongs");
+                //TODO: Add effects and sounds
                 WrongLetterText.text += s + "  ";
                 _gallowManangerScript.UpdateGraphics();
             }

@@ -52,12 +52,14 @@ public class GetWord_Script : MonoBehaviour
         for (int i = 0; i < l; i++)
         {
             _letterSlotText[i].transform.parent.gameObject.SetActive(true);
+            Image letterImage = _letterSlotText[i].transform.parent.GetComponent<Image>();
             if (ActiveWord[i].ToString() == " ")
             {
                 _letterSlotText[i].text = "";
-                _letterSlotText[i].transform.parent.GetComponent<Image>().enabled = false;
+                letterImage.enabled = false;
                 continue;
             }
+            letterImage.enabled = true;
             _activeSlots.Add(_letterSlotText[i].gameObject);
             _letterSlotText[i].text = ActiveWord[i].ToString();
             _letterSlotText[i].gameObject.SetActive(false);
@@ -152,13 +154,13 @@ public class GetWord_Script : MonoBehaviour
             Debug.Log("Word Correct");
             //_getWordScript.DisplayWord();
             StartCoroutine("DisplayWord");
+            _scoreManangerScript.AddCorrect();
         }
         else
         {
             Debug.Log("Word is Wrong");
             _gallowManangerScript.UpdateGraphics();
             _inputManangerScript.ClearInputFields();
-
         }
     }
 
@@ -181,19 +183,25 @@ public class GetWord_Script : MonoBehaviour
         if (b)
         {
             Debug.Log("Word Completet");
-            WordList.Remove(ActiveWord);
-            if (WordList.Count <= 0)
+            _gameManangerScript.GameIsOver("Victory", "You completed the word, wanna try one more?");
+            //WordList.Remove(ActiveWord);
+            /*if (WordList.Count <= 0)
             {
                 Debug.Log("No more words");
-                _gameManangerScript.GameIsOver("Victory", "You saved everyone, grats.. they where all killers..", _scoreManangerScript.TotalScore);
+                _gameManangerScript.GameIsOver("Game Over", "There is no words. cause word list is empty.");
                 return;
             }
-            ChooseWord();
+            ChooseWord();*/
         }
         else
         {
             Debug.Log("Word not complete");
         }
         _inputManangerScript.ClearInputFields();
+    }
+
+    public void RemoveActiveWord()
+    {
+        WordList.Remove(ActiveWord);
     }
 }

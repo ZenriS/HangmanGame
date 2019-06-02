@@ -119,18 +119,18 @@ public class WordImport_Script : MonoBehaviour
         {
             if (c == "All") //get all the words
             {
-                Debug.Log(s);
+                //Debug.Log(s);
                 string[] t = s.Split(';');
-                Debug.Log(t[0] + "/" + t[1]);
+                //Debug.Log(t[0] + "/" + t[1]);
                 _activeWords.Add(t[1]);
                 ToggleCategoryButtons(false);
                 _gameManangerScript._wordAdded.SetText("All Categories Added");
             }
             else if (s.Contains(c))
             {
-                Debug.Log(s);
+                //Debug.Log(s);
                 string[] t = s.Split(';');
-                Debug.Log(t[0] +"/" +t[1]);
+                //Debug.Log(t[0] +"/" +t[1]);
                 _activeWords.Add(t[1]);
                 _gameManangerScript._wordAdded.SetText("Category Added");
             }

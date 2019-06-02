@@ -21,6 +21,9 @@ public class GameMananger_Script : MonoBehaviour
     [HideInInspector] public ScaleOut_Script _wordAdded;
     private WordImport_Script _wordImportScript;
     private TextMeshProUGUI _wordCountText;
+    private ScoreMananger_Script _scoreManangerScript;
+    private Button _newWordButton;
+    private InputMananger_Script _inputManangerScript;
 
     void Start()
     {
@@ -31,6 +34,9 @@ public class GameMananger_Script : MonoBehaviour
         _wordAdded = CategoryUIGO.GetComponentInChildren<ScaleOut_Script>();
         _wordImportScript = GetComponent<WordImport_Script>();
         _wordCountText = CategoryUIGO.transform.GetChild(8).GetComponent<TextMeshProUGUI>();
+        _scoreManangerScript = GetComponent<ScoreMananger_Script>();
+        _newWordButton = GameOverGO.transform.GetChild(4).GetChild(1).GetComponent<Button>();
+        _inputManangerScript = GetComponent<InputMananger_Script>();
         GameOverGO.SetActive(false);
         MainGameUIGO.SetActive(false);
         CategoryUIGO.SetActive(true);
@@ -38,13 +44,25 @@ public class GameMananger_Script : MonoBehaviour
         UpdateWordCountText(0);
     }
 
-    public void GameIsOver(string t, string mt, int sc)
+    public void GameIsOver(string t, string mt)
     {
         MainGameUIGO.SetActive(false);
         GameOverGO.SetActive(true);
-        _gameOverTitleText.text = t;
-        _gameOverText.text = mt;
-        _scoreText.text = "Score: " + sc;
+        if (_getWordScript.WordList.Count > 0)
+        {
+            _gameOverTitleText.text = t;
+            _gameOverText.text = mt;
+            _scoreText.text = "You currently have: \nCorrect: " + _scoreManangerScript.Correct + "\nWrong: " + _scoreManangerScript.Failed;
+        }
+        else
+        {
+            _gameOverTitleText.text = "Game Over";
+            _gameOverText.text = "No more words, go back to Main Menu to create a new word list";
+            _scoreText.text = "You'r final score: \nCorrect: " + _scoreManangerScript.Correct + "\nWrong: " + _scoreManangerScript.Failed;
+            _newWordButton.gameObject.SetActive(false);
+        }
+        _inputManangerScript.WrongLetterText.text = "";
+        _getWordScript.RemoveActiveWord();
     }
 
     public void RestartGame()
@@ -92,5 +110,10 @@ public class GameMananger_Script : MonoBehaviour
         _wordCountText.text = "Word Count: \n" + i;
     }
 
+    public void NextWord()
+    {
+        GameOverGO.SetActive(false);
+        MainGameUIGO.SetActive(true);
+    }
     
 }

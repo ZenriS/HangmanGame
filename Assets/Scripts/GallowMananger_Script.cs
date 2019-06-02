@@ -58,8 +58,9 @@ public class GallowMananger_Script : MonoBehaviour
         }
         if (_gallowCount >= _gallowSprits.Length-1 && _characterCount >= _characterSprites.Length)
         {
-            _gameManangerScript.GameIsOver("Game Over","All the people are dead", _scoreManangerScript.TotalScore);
+            _gameManangerScript.GameIsOver("Game Over","You failed, wanna try another word?");
             Debug.Log("No More Grahics, Game Over");
+            _scoreManangerScript.AddFail();
         }
     }
 }
